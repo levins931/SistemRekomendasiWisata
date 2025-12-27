@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Rekomendasi Wisata</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Sistem Rekomendasi Wisata Probolinggo</h1>
+
+    <!-- Lokasi User -->
+    <div class="header-lokasi">
+        <h3>Lokasi Anda</h3>
+        <p id="current-location-text">Silakan gunakan tombol untuk mendeteksi lokasi atau masukkan manual.</p>
+        <form id="lokasi-form" method="get" style="display:none;">
+            <input type="hidden" id="lat" name="lat">
+            <input type="hidden" id="lon" name="lon">
+        </form>
+        <button onclick="getLokasi()">Gunakan Lokasi Saat Ini</button>
+        <p class="message" id="message"></p>
+    </div>
+
+    <hr>
+    
+    <!-- Preferensi User -->
+    <h3>Cari Berdasarkan Preferensi</h3>
+    <form id="preferensi-form" method="get">
+        <label for="preferensi">Masukkan preferensi Anda:</label><br>
+        <input type="text" id="preferensi" name="preferensi" 
+               value="{{ preferensi }}" 
+               placeholder="Contoh: alam, pantai, bersejarah"><br>
+        <input type="submit" value="Cari Rekomendasi">
+    </form>
+    
+    <hr>
+
+    <!-- Hasil Rekomendasi -->
+    {% if rekomendasi %}
+    <h2>Hasil Rekomendasi:</h2>
+
+    <!-- Dropdown Sorting -->
+    <form method="get" style="margin-bottom: 20px;">
+        <input type="hidden" name="preferensi" value="{{ preferensi }}">
+        <label for="sort">Urutkan Berdasarkan:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            <option value="">-- Pilih --</option>
+            <option value="rating" {% if sort == "rating" %}selected{% endif %}>Rating Tertinggi</option>
+            <option value="harga" {% if sort == "harga" %}selected{% endif %}>Harga Termurah</option>
+        </select>
+    </form>
+
+    <div class="rekomendasi-container">
+        {% for item in rekomendasi %}
+        <a href="{% url 'detail_wisata' place_id=item.place_id %}">
+            <div class="rekomendasi-card">
+                <img src="{{ item.image }}" alt="Gambar {{ item.name }}">
+                <div class="rekomendasi-card-content">
+                    <h3>{{ item.name }}</h3>
+                    <p><strong>Kategori:</strong> {{ item.category }}</p>
+                    <p><strong>Skor:</strong> {{ item.score }}</p>
+                    <p><strong>Harga:</strong> Rp{{ item.ticket_price }}</p>
+                    <p><strong>Deskripsi:</strong> {{ item.description }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Tempat Wisata Terdekat -->
+    {% if terdekat %}
+    <h2>Tempat Wisata Terdekat:</h2>
+
+    <!-- Dropdown Sorting Jarak -->
+    <form method="get" style="margin-bottom: 20px;">
+        <input type="hidden" name="lat" value="{{ request.GET.lat }}">
+        <input type="hidden" name="lon" value="{{ request.GET.lon }}">
+        <label for="sort">Urutkan Berdasarkan:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            <option value="">-- Pilih --</option>
+            <option value="jarak" {% if sort == "jarak" %}selected{% endif %}>Jarak Terdekat</option>
+        </select>
+    </form>
+
+    <div class="rekomendasi-container">
+        {% for item in terdekat %}
+        <a href="{% url 'detail_wisata' place_id=item.place_id %}">
+            <div class="rekomendasi-card">
+                <img src="{{ item.image }}" alt="Gambar {{ item.name }}">
+                <div class="rekomendasi-card-content">
+                    <h3>{{ item.name }}</h3>
+                    <p><strong>Kategori:</strong> {{ item.category }}</p>
+                    <p><strong>Jarak:</strong> {{ item.distance }}</p>
+                    <p><strong>Harga:</strong> Rp{{ item.ticket_price }}</p>
+                    <p><strong>Deskripsi:</strong> {{ item.description }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Script JS Lokasi -->
+    <script>
+        function getLokasi() {
+            const statusText = document.getElementById('current-location-text');
+            if (navigator.geolocation) {
+                statusText.textContent = "Mencari lokasi...";
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        statusText.textContent = `Lokasi ditemukan: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        
+                        document.getElementById('lat').value = lat;
+                        document.getElementById('lon').value = lon;
+                        document.getElementById('lokasi-form').submit(); 
+                    },
+                    function(error) {
+                        const message = document.getElementById('message');
+                        statusText.textContent = "Gagal mendapatkan lokasi.";
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                message.textContent = "Izin lokasi ditolak.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                message.textContent = "Lokasi tidak tersedia.";
+                                break;
+                            case error.TIMEOUT:
+                                message.textContent = "Waktu deteksi lokasi habis.";
+                                break;
+                            default:
+                                message.textContent = "Terjadi kesalahan saat mendapatkan lokasi.";
+                                break;
+                        }
+                    }
+                );
+            } else { 
+                statusText.textContent = "Browser Anda tidak mendukung Geolocation.";
+            }
+        }
+    </script>
+</body>
+</html>

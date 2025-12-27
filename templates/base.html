@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Sistem Rekomendasi Wisata{% endblock %}</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- CSS utama (pastikan file ini ada di static/css/base.css) -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1">
+</head>
+
+<body class="home-page">
+
+  {% csrf_token %}
+
+  <!-- ==============================
+       NAVBAR
+       ============================== -->
+  <nav class="navbar">
+    <div class="nav-container">
+  
+      <!-- LEFT SIDE -->
+      <div class="nav-left">
+        <a href="{% url 'home' %}" class="nav-brand">
+          <i class="fa-solid fa-location-dot"></i> Wisata Probolinggo
+        </a>
+      
+        <button class="nav-toggle" id="navToggle">
+          <i class="fa fa-bars"></i>
+        </button>
+      </div>
+  
+      <!-- MENU -->
+      <ul class="nav-links" id="navMenu">
+        <li><a href="{% url 'home' %}"><i class="fa fa-home"></i> Home</a></li>
+        <li><a href="{% url 'search_tfidf' %}"><i class="fa fa-compass"></i> Rekomendasi</a></li>
+        <li><a href="{% url 'list_favorites' %}"><i class="fa fa-heart"></i> Favorit</a></li>
+  
+        {% if user.is_authenticated %}
+          <li><a href="#"><i class="fa fa-user"></i> {{ user.username }}</a></li>
+          <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}"><i class="fa fa-sign-in-alt"></i> Login</a></li>
+          <li><a href="{% url 'register' %}"><i class="fa fa-user-plus"></i> Register</a></li>
+        {% endif %}
+      </ul>
+  
+    </div>
+  </nav>
+
+  <!-- ==============================
+       MAIN CONTENT
+       ============================== -->
+  <main class="main-content">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- ==============================
+       FOOTER
+       ============================== -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-left">
+        &copy; 2025 Sistem Rekomendasi Wisata Probolinggo. Semua Hak Dilindungi.
+      </div>
+
+      <div class="footer-right">
+        <a href="{% url 'home' %}" title="Home"><i class="fa fa-home"></i></a>
+        <a href="{% url 'list_favorites' %}" title="Favorit"><i class="fa fa-heart"></i></a>
+        <a href="https://www.instagram.com" target="_blank" title="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.facebook.com" target="_blank" title="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==============================
+       JAVASCRIPT
+       ============================== -->
+  <script src="{% static 'js/main.js' %}?v=1"></script>
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("navToggle");
+    const menu = document.getElementById("navMenu");
+  
+    toggle.addEventListener("click", function () {
+      menu.classList.toggle("open");
+    });
+  });
+  </script>
+</body>
+</html>

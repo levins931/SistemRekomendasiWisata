@@ -1,0 +1,159 @@
+/* ==============================
+   AUTH PAGE (LOGIN & REGISTER)
+   ============================== */
+
+   .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color), var(--accent-color));
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+    padding: 1rem;
+  }
+  
+  /* Animasi background lembut */
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Kartu utama */
+  .auth-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 0.7s ease-in-out;
+  }
+  
+  .auth-card h2 {
+    color: var(--secondary-color);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+  
+  /* Form field */
+  .form-group {
+    margin-bottom: 1.2rem;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    border: 2px solid #dce7e6;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  
+  .form-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(10, 147, 150, 0.2);
+  }
+  
+  /* Tombol login/register */
+  .btn-auth {
+    width: 100%;
+    background: var(--primary-color);
+    border: none;
+    color: #fff;
+    padding: 0.8rem;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+  }
+  
+  .btn-auth:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Pesan flash (error/success) */
+  .messages {
+    margin-bottom: 1rem;
+  }
+  
+  .msg {
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .msg.error {
+    background: #ffe0e0;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+  }
+  
+  .msg.success {
+    background: #e6ffed;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+  }
+  
+  /* Footer link (login/register switch) */
+  .auth-footer {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .auth-footer a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .auth-footer a:hover {
+    color: var(--highlight-color);
+  }
+  
+  /* Animasi masuk */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 480px) {
+    .auth-card {
+      padding: 2rem 1.2rem;
+    }
+  
+    .auth-card h2 {
+      font-size: 1.5rem;
+    }
+  
+    .btn-auth {
+      font-size: 0.95rem;
+    }
+  }  

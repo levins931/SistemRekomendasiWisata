@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Beranda - Sistem Rekomendasi Wisata Probolinggo{% endblock %}
+
+{% block content %}
+<!-- CSS khusus halaman Home -->
+<link rel="stylesheet" href="{% static 'css/style.css' %}?v=7">
+
+<!-- ==============================
+     HERO SLIDER
+     ============================== -->
+<section class="hero-slider">
+  <div class="slides">
+
+    <!-- Slide 1 -->
+    <div class="slide active" style="background-image: url('{% static "images/1.jpg" %}');">
+      <div class="overlay">
+        <h1>Selamat Datang di Probolinggo</h1>
+        <p>Temukan pesona alam, wisata budaya, dan petualangan tak terlupakan</p>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide" style="background-image: url('{% static "images/2.jpg" %}');">
+      <div class="overlay">
+        <h1>Gunung Bromo yang Megah</h1>
+        <p>Jelajahi keindahan alam dan lautan pasir yang menakjubkan</p>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide" style="background-image: url('{% static "images/3.jpg" %}');">
+      <div class="overlay">
+        <h1>Wisata Air Terjun Probolinggo</h1>
+        <p>Rasakan kesejukan alam dan keindahan tersembunyi</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="slider-nav">
+    <button class="hero-btn prev" aria-label="Sebelumnya"></button>
+    <button class="hero-btn next" aria-label="Selanjutnya"></button>
+  </div>
+
+  <!-- DOTS -->
+  <div class="slider-dots"></div>
+</section>
+
+<section class="home-cta">
+  <div class="container">
+    <p class="cta-text">
+      🎯 Bingung menentukan tujuan wisata?
+      <strong>Sistem ini akan merekomendasikan destinasi wisata sesuai minatmu.</strong>
+    </p>
+
+    <a href="{% url 'search_tfidf' %}" class="home-cta-btn">
+      🔍 Cari Rekomendasi Wisata
+    </a>
+  </div>
+</section>
+<!-- ==============================
+     TENTANG SISTEM & WISATA PROBOLINGGO
+     ============================== -->
+     <section class="system-explain">
+      <div class="container">
+        <h2 class="section-title">🧠 Sistem Rekomendasi Wisata Probolinggo</h2><br>
+    
+        <div class="system-content">
+          <p>
+            Kabupaten Probolinggo merupakan salah satu daerah di Jawa Timur yang memiliki
+            kekayaan destinasi wisata alam, mulai dari kawasan pegunungan, air terjun,
+            pantai, hingga wisata edukasi dan budaya. Namun, banyaknya pilihan destinasi wisata sering kali membuat wisatawan kesulitan dalam menentukan lokasi yang sesuai dengan minat dan preferensi mereka.
+          </p>
+    
+          <p>
+            Untuk menjawab permasalahan tersebut, sistem ini dirancang sebagai
+            <strong>sistem rekomendasi wisata</strong> yang dapat membantu pengguna menemukan
+            destinasi yang relevan berdasarkan preferensi mereka. Sistem
+            menganalisis deskripsi wisata menggunakan metode
+            <strong>TF-IDF (Term Frequency–Inverse Document Frequency)</strong> untuk
+            merepresentasikan karakteristik setiap destinasi.
+          </p>
+    
+          <p>
+            Selanjutnya, tingkat kemiripan antar destinasi dihitung menggunakan algoritma
+            <strong>K-Nearest Neighbor (KNN)</strong>. Berdasarkan hasil perhitungan tersebut,
+            sistem akan menampilkan rekomendasi destinasi wisata yang memiliki tingkat
+            kemiripan tertinggi dengan preferensi pengguna, sehingga proses pencarian
+            menjadi lebih efektif dan terarah.
+          </p>
+        </div>
+      </div>
+    </section>    
+
+<!-- ==============================
+     FITUR UTAMA
+     ============================== -->
+<section class="features">
+  <div class="container">
+    <h2 class="section-title">✨ Fitur Utama</h2><br>
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <img src="{% static 'icons/search.svg' %}" alt="Cari">
+        <h3>Cari Wisata</h3>
+        <p>Temukan destinasi sesuai preferensimu menggunakan TF-IDF + KNN</p>
+        <a href="{% url 'search_tfidf' %}" class="btn-small">Mulai Cari</a>
+      </div>
+
+      <div class="feature-card">
+        <img src="{% static 'icons/heart.svg' %}" alt="Favorit">
+        <h3>Favorit Saya</h3>
+        <p>Simpan tempat wisata favoritmu agar tidak terlupa 🌟</p>
+        <a href="{% url 'list_favorites' %}" class="btn-small">Lihat Favorit</a>
+      </div>
+
+      <div class="feature-card">
+        <img src="{% static 'icons/info.svg' %}" alt="Tentang">
+        <h3>Tentang Sistem</h3>
+        <p>Pelajari bagaimana sistem ini memberikan rekomendasi cerdas untukmu</p>
+        <a href="#" class="btn-small">Pelajari</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ==============================
+     SLIDER DESTINASI WISATA
+     ============================== -->
+<section class="destination-slider">
+  <div class="container">
+    <h2 class="section-title">🌍 Destinasi Wisata Pilihan</h2>
+
+    <div class="slider-wrapper">
+      <!-- Tombol kiri -->
+      <button class="nav-btn prev" aria-label="Sebelumnya"></button>
+
+      <!-- Track slider -->
+      <div class="slider-track">
+        {% for wisata in wisata_list %}
+        <div class="dest-card">
+          <img src="{{ wisata.image }}" alt="{{ wisata.name }}">
+          <div class="dest-content">
+            <h3>{{ wisata.name }}</h3>
+            <p class="category">{{ wisata.category.name }}</p>
+            <a href="{% url 'detail_wisata' wisata.place_id %}" class="btn-small">
+              Lihat Detail
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Tombol kanan -->
+      <button class="nav-btn next" aria-label="Selanjutnya"></button>
+    </div>
+
+    <div class="see-more">
+      <a href="{% url 'search_tfidf' %}" class="btn-main">
+        🔍 Lihat Semua Destinasi
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     KATEGORI POPULER
+     ============================== -->
+<section class="categories">
+  <div class="container">
+    <h2 class="section-title">🌋 Kategori Wisata Populer</h2>
+    <div class="category-grid">
+      <a href="{% url 'search_tfidf' %}?q=Gunung" class="category-item">🏔️ Gunung & Alam</a>
+      <a href="{% url 'search_tfidf' %}?q=Pantai" class="category-item">🏖️ Pantai & Laut</a>
+      <a href="{% url 'search_tfidf' %}?q=Air Terjun" class="category-item">💧 Air Terjun</a>
+      <a href="{% url 'search_tfidf' %}?q=Danau" class="category-item">🌊 Danau & Ranu</a>
+      <a href="{% url 'search_tfidf' %}?q=Taman" class="category-item">🌿 Taman & Edukasi</a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ==============================
+     JAVASCRIPT SLIDER
+     ============================== -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll(".slide");
+    const dotsContainer = document.querySelector(".slider-dots");
+    const prevBtn = document.querySelector(".prev");
+    const nextBtn = document.querySelector(".next");
+  
+    let index = 0;
+  
+    // create dots
+    slides.forEach((_, i) => {
+      const dot = document.createElement("div");
+      dot.classList.add("dot");
+      if (i === 0) dot.classList.add("active");
+      dot.addEventListener("click", () => goToSlide(i));
+      dotsContainer.appendChild(dot);
+    });
+  
+    const dots = document.querySelectorAll(".dot");
+  
+    function showSlide(i) {
+      slides.forEach(slide => slide.classList.remove("active"));
+      dots.forEach(dot => dot.classList.remove("active"));
+  
+      slides[i].classList.add("active");
+      dots[i].classList.add("active");
+    }
+  
+    function goToSlide(i) {
+      index = i;
+      showSlide(index);
+    }
+  
+    function nextSlide() {
+      index = (index + 1) % slides.length;
+      showSlide(index);
+    }
+  
+    function prevSlide() {
+      index = (index - 1 + slides.length) % slides.length;
+      showSlide(index);
+    }
+  
+    nextBtn.addEventListener("click", nextSlide);
+    prevBtn.addEventListener("click", prevSlide);
+  
+    // auto slide
+    setInterval(nextSlide, 6000);
+  });
+  </script>
+  
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.querySelector(".slider-track");
+    const next = document.querySelector(".nav-btn.next");
+    const prev = document.querySelector(".nav-btn.prev");
+
+    const scrollAmount = 320;
+
+    next.addEventListener("click", () => {
+      track.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+
+    prev.addEventListener("click", () => {
+      track.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+  });
+</script>
+
+
+{% endblock %}

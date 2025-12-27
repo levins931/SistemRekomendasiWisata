@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tempat Favorit{% endblock %}
+
+{% block content %}
+<!-- CSS khusus halaman favorit -->
+<link rel="stylesheet" href="{% static 'css/style.css' %}?v=15">
+
+<!-- ==============================
+     HERO FAVORIT
+     ============================== -->
+<section class="favorite-hero">
+  <div class="hero-overlay">
+    <h1>❤️ Tempat Favorit Saya</h1>
+    <p>Simpan destinasi terbaikmu dan kunjungi lagi kapan saja 🌴</p>
+  </div>
+</section>
+
+<!-- ==============================
+     DAFTAR FAVORIT
+     ============================== -->
+<div class="container favorite-page">
+  {% if favorites %}
+  <div class="favorite-grid">
+    {% for fav in favorites %}
+    <div class="favorite-card">
+
+      <!-- Gambar wisata -->
+      {% if fav.place.image %}
+      <a href="{% url 'detail_wisata' fav.place.place_id %}" class="fav-link">
+        <div class="fav-image" style="background-image: url('{{ fav.place.image }}');"></div>
+      </a>
+      {% else %}
+      <div class="fav-image" style="background-image: url('{% static 'img/no-image.jpg' %}');"></div>
+      {% endif %}
+
+      <!-- Info wisata -->
+      <div class="fav-info">
+        <h3 class="fav-name">
+          <a href="{% url 'detail_wisata' fav.place.place_id %}">
+            {{ fav.place.name }}
+          </a>
+        </h3>
+        <p class="fav-category">{{ fav.place.category.name }}</p>
+      </div>
+
+      <!-- Tombol hapus favorit -->
+      <button class="btn-remove-fav"
+              data-url="{% url 'toggle_favorite' fav.place.place_id %}"
+              title="Hapus dari Favorit">
+        <span class="icon-heart"></span>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <p class="empty-fav">
+    Belum ada tempat favorit 💖<br>
+    <span>Tambahkan destinasi impianmu untuk tampil di sini!</span>
+  </p>
+  {% endif %}
+</div>
+
+<!-- ==============================
+     JAVASCRIPT FAVORIT
+     ============================== -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.btn-remove-fav');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const url = btn.dataset.url;
+        const card = btn.closest('.favorite-card');
+
+        // Animasi klik love
+        btn.classList.add('active');
+
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            // Hapus kartu dengan animasi lembut
+            setTimeout(() => {
+              card.style.transition = 'all 0.4s ease';
+              card.style.opacity = '0';
+              card.style.transform = 'scale(0.9)';
+              setTimeout(() => card.remove(), 400);
+            }, 300);
+          }
+        } catch (error) {
+          console.error('Gagal menghapus favorit:', error);
+        }
+
+        // Reset animasi love
+        setTimeout(() => btn.classList.remove('active'), 600);
+      });
+    });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Sistem Rekomendasi Wisata</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2>Register</h2>
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <p class="msg {{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" name="username" placeholder="Buat username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" placeholder="Buat password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password2">Konfirmasi Password</label>
+          <input type="password" name="password2" placeholder="Ulangi password" required>
+        </div>
+
+        <button type="submit" class="btn-auth">Register</button>
+      </form>
+
+      <p class="auth-footer">Sudah punya akun? <a href="{% url 'login' %}">Login di sini</a></p>
+    </div>
+  </div>
+</body>
+</html>

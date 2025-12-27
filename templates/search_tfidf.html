@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cari Wisata - Sistem Rekomendasi{% endblock %}
+
+{% block content %}
+<!-- CSS khusus halaman pencarian -->
+<link rel="stylesheet" href="{% static 'css/style.css' %}?v=4">
+
+<div class="container">
+  <!-- === Pencarian & Sorting === -->
+  <div class="search-container">
+    <h1 class="title">Temukan Destinasi Wisata di Probolinggo</h1>
+    <p class="subtitle">
+      Cari tempat sesuai keinginanmu — pantai, gunung, air terjun, atau wisata keluarga.
+    </p>
+
+    <form method="post" action="{% url 'search_tfidf' %}" class="search-box">
+      {% csrf_token %}
+      <input
+        type="text"
+        name="preferensi"
+        value="{{ query|default_if_none:'' }}"
+        placeholder="🔍 Cari wisata... contoh: Pantai Bentar, Air Terjun Madakaripura"
+        required
+      >
+      <button type="submit" class="btn-search">Cari</button>
+    </form>
+
+    {% if results %}
+    <!-- <div class="sorting">
+      <span>Urutkan berdasarkan:</span>
+      <a href="?q={{ query|urlencode }}&sort=rating" class="link">⭐ Rating</a>
+      <a href="?q={{ query|urlencode }}&sort=harga" class="link">💰 Harga</a>
+      <a href="?q={{ query|urlencode }}&sort=jarak" class="link">📍 Jarak</a>
+    </div> -->
+    {% endif %}
+  </div>
+
+  <!-- === Hasil Rekomendasi === -->
+  <div class="results">
+    {% if results %}
+    <div class="grid">
+      {% for r in results %}
+      <div class="card">
+        {% if r.image %}
+          <img src="{{ r.image }}" alt="{{ r.name|default:'Gambar wisata' }}">
+        {% else %}
+          <img src="{% static 'img/no-image.jpg' %}" alt="Tidak ada gambar">
+        {% endif %}
+      
+        <div class="card-content">
+          <h3>
+            <a href="{% url 'detail_wisata' r.place_id %}">{{ r.name }}</a>
+          </h3>
+      
+          <p class="category">{{ r.category }}</p>
+      
+          <!-- ⭐ Rating + jumlah ulasan -->
+          <p class="rating-line">
+            ⭐ {{ r.rating|floatformat:1|default:"0.0" }}
+            <span class="reviews">
+              ({{ r.review_count|default:"0" }} ulasan)
+            </span>
+          </p>
+          <!-- <p class="similarity">🔍 Skor kemiripan: {{ r.score }}</p> -->
+          <p class="desc">{{ r.description }}</p>
+        </div>
+      </div>      
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">❌ Tidak ada hasil ditemukan. Coba kata kunci lain.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

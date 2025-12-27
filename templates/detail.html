@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block title %}{{ item.Place_Name }} - Detail Wisata{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}?v=1">
+
+{% if item %}
+
+  <!-- HERO (opsional) -->
+  {% if item.Image %}
+  <div class="detail-hero" style="background-image: url('{{ item.Image }}');">
+    <div class="overlay">
+      <h1>{{ item.Place_Name }}</h1>
+      <p>{{ item.Category }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="container">
+    <div class="detail-layout">
+
+      <!-- LEFT: Detail utama -->
+      <main class="col-left">
+        <div class="detail-card">
+
+          <!-- Gambar utama dengan overlay judul di pojok kiri bawah -->
+          <figure class="main-photo">
+            <img src="{{ item.Image }}" alt="Foto {{ item.Place_Name }}" loading="eager">
+            <div class="photo-title-overlay">
+              <h2 class="detail-title">{{ item.Place_Name }}</h2>
+              {% if item.City %}
+              <span class="photo-sub">{{ item.City }}</span>
+              {% endif %}
+            </div>
+          </figure>
+
+          <!-- Jika butuh judul di atas konten juga (opsional), hapus komentar -->
+          <!-- <h2 class="detail-title">{{ item.Place_Name }}</h2> -->
+
+          {% if user.is_authenticated %}
+          <button class="btn-favorite" data-url="{% url 'toggle_favorite' item.Place_Id %}">❤️ Tambah ke Favorit</button>
+          {% else %}
+          <a href="{% url 'login' %}" class="btn">Login untuk Menyimpan Favorit ❤️</a>
+          {% endif %}
+
+          <div class="detail-desc">
+            {{ item.Description }}
+          </div>
+
+          {% if item.Facilities %}
+          <div class="facilities">
+            <h4>🏕️ Fasilitas</h4>
+            <ul>
+              {% for f in item.Facilities|split:',' %}
+              <li>{{ f }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          {% if item.Ticket_Info %}
+          <div class="price-info">
+            <h4>💰 Harga Tiket & Parkir</h4>
+            <p>{{ item.Ticket_Info|linebreaksbr }}</p>
+          </div>
+          {% endif %}
+
+          <div class="rating">
+            {% if item.Rating %} ⭐ {{ item.Rating|floatformat:1 }} {% endif %}
+            {% if item.Review_Count %} <span class="reviews">({{ item.Review_Count }} ulasan)</span> {% endif %}
+          </div>
+
+          {% if item.Coordinates %}
+            {% with item.Coordinates|split:',' as coords %}
+            <a href="https://www.google.com/maps/dir/?api=1&destination={{ coords.0 }},{{ coords.1 }}" class="btn-route" target="_blank">
+              📍 Lihat Rute di Google Maps
+            </a>
+            {% endwith %}
+          {% endif %}
+
+        </div>
+      </main>
+
+      <!-- RIGHT: Sidebar rekomendasi -->
+      <aside class="col-right">
+        <div class="recommend-section sticky-recommend">
+          <h3>🧭 Rekomendasi Wisata Mirip</h3>
+          <div class="grid-cards">
+            {% for r in rekomendasi_mirip %}
+            <a href="{% url 'detail_wisata' r.place_id %}" class="recommend-card">
+              <div class="card-image" style="background-image: url('{{ r.image }}');"></div>
+              <div class="card-info">
+                <div class="card-title">{{ r.name }}</div>
+                <div class="category">{{ r.category }}</div>
+              </div>
+            </a>
+            {% empty %}
+            <div class="empty">Tidak ada rekomendasi mirip ditemukan.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+{% else %}
+  <div class="container">
+    <p>❌ Data wisata tidak ditemukan.</p>
+  </div>
+{% endif %}
+
+{% endblock %}
